@@ -8,6 +8,7 @@
 int main() {
     Maze maze;
     Robot robot(maze); 
+    maze.display(); 
     Floodfill floodfill(maze); 
     robot.solveMaze(floodfill);
     

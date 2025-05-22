@@ -154,6 +154,60 @@ void Floodfill::setPath(const std::array<Cell*, 256>& newPath) {
 // Handle user input to add walls manually during runtime
 void Floodfill::handleUserInput(Cell* current) {
     char userInput;
+    std::cout << "Press 'l' to continue or 'w' to add walls: ";
+    std::cin >> std::ws;
+    userInput = std::cin.get();
+
+    if (userInput == 'w') {
+        int numWalls;
+        std::cout << "How many walls do you want to add? (1–4): ";
+        std::cin >> numWalls;
+
+        if (numWalls < 1 || numWalls > 4) {
+            std::cout << "Invalid number of walls. Please enter a number between 1 and 4.\n";
+            return;
+        }
+
+        for (int i = 0; i < numWalls; ++i) {
+            int x, y;
+            char dir;
+            std::cout << "\nWall #" << (i + 1) << ":\n";
+            std::cout << "Enter x coordinate: ";
+            std::cin >> x;
+            std::cout << "Enter y coordinate: ";
+            std::cin >> y;
+            std::cout << "Enter direction (U/D/L/R): ";
+            std::cin >> dir;
+
+            if (dir != 'U' && dir != 'D' && dir != 'L' && dir != 'R') {
+                std::cout << "Invalid direction! Skipping this wall.\n";
+                continue;
+            }
+
+            Direction wallDir = (dir == 'U' ? UP : dir == 'D' ? DOWN : dir == 'L' ? LEFT : RIGHT);
+            maze.setWall(x, y, wallDir, true); // Add wall to maze
+            std::cout << "Wall added at (" << x << ", " << y << ") in direction " << dir << "\n";
+
+            Cell* wallCell = maze.getCell(x, y);
+            if (wallCell) {
+                wallCell->printNeighbors();
+            } else {
+                std::cout << "Error: Invalid cell coordinates.\n";
+            }
+        }
+
+        reflood(maze.getRobot()); // Recalculate flood values
+        std::cout << "After reflooding, distances updated.\n";
+
+    } else if (userInput != 'l') {
+        std::cout << "Invalid input. Press 'l' to continue or 'w' to add walls.\n";
+    }
+}
+
+/*
+ONE WALL AT TIME
+void Floodfill::handleUserInput(Cell* current) {
+    char userInput;
     std::cout << "Press 'l' to continue or 'w' to add a wall: ";
     std::cin >> std::ws;
     userInput = std::cin.get();
@@ -190,3 +244,4 @@ void Floodfill::handleUserInput(Cell* current) {
         std::cout << "Invalid input. Press 'l' to continue or 'w' to add a wall.\n";
     }
 }
+*/
